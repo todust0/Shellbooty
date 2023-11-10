@@ -30,10 +30,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -55,9 +53,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Straight Forward", group="Robot")
+@Autonomous(name="Backside Blue", group="Robot")
 
-public class Atonomus extends LinearOpMode {
+public class ATONOMUSbacksideRed extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor leftFrontDrive = null;
@@ -69,6 +67,7 @@ public class Atonomus extends LinearOpMode {
 
     static final double FORWARD_SPEED = 0.3;
     static final double TURN_SPEED = 0.5;
+    static final double BACKWARD_SPEED = -0.3;
 
     @Override
     public void runOpMode() {
@@ -97,24 +96,50 @@ public class Atonomus extends LinearOpMode {
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
 
         // Step 1:  Drive forward for 3 seconds
+        leftFrontDrive.setPower(BACKWARD_SPEED);
+        rightFrontDrive.setPower(FORWARD_SPEED);
+        rightBackDrive.setPower(BACKWARD_SPEED);
+        leftBackDrive.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() <0.3 )) {
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
         leftFrontDrive.setPower(FORWARD_SPEED);
         rightFrontDrive.setPower(FORWARD_SPEED);
         rightBackDrive.setPower(FORWARD_SPEED);
         leftBackDrive.setPower(FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() <2.9 )) {
+        while (opModeIsActive() && (runtime.seconds() < 4.4 )) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-
-                // Step 4:  Stop
+        leftFrontDrive.setPower(BACKWARD_SPEED);
+        rightFrontDrive.setPower(FORWARD_SPEED);
+        rightBackDrive.setPower(BACKWARD_SPEED);
+        leftBackDrive.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() <2.0 )) {
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+        leftFrontDrive.setPower(FORWARD_SPEED);
+        rightFrontDrive.setPower(FORWARD_SPEED);
+        rightBackDrive.setPower(FORWARD_SPEED);
+        leftBackDrive.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1.0 )) {
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+        // Step 4:  Stop
         leftFrontDrive.setPower(0);
         rightFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
         leftBackDrive.setPower(0);
 
-                telemetry.addData("Path", "Complete");
-                telemetry.update();
-                sleep(1000);
-        }
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
+        sleep(1000);
     }
+}
