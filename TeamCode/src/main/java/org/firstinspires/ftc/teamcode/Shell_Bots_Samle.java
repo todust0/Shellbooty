@@ -174,7 +174,21 @@ public class Shell_Bots_Samle extends OpMode
         motorPowers[2] = (leftY - leftX + rightX);
         motorPowers[3] = (leftY + leftX - rightX);
 
-
+        //New change if no work
+        if (leftX == 0 && leftY == 0)
+        {
+            leftFrontMotor.setPower(0);
+            leftBackMotor.setPower(0);
+            rightFrontMotor.setPower(0);
+            rightBackMotor.setPower(0);
+        }
+        else
+        {leftFrontMotor.setPower(-motorPowers[0]);
+            rightFrontMotor.setPower(-motorPowers[1]);
+            leftBackMotor.setPower(-motorPowers[2]);
+            rightBackMotor.setPower(-motorPowers[3]);
+        }
+        //end of new stuff
         float max = getLargestAbsVal(motorPowers);
         if (max < 1) {
             max = 1;
@@ -195,6 +209,11 @@ public class Shell_Bots_Samle extends OpMode
         setIndividualPowers(motorPowers);
 
     }
+
+
+
+
+
 
     private float getLargestAbsVal ( float[] values){
         // This function does some math!
