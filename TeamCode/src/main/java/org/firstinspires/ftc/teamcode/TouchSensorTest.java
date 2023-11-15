@@ -67,9 +67,9 @@ public class TouchSensorTest extends LinearOpMode {
 
             // send the info back to driver station using telemetry function.
             if (touchSensor.isPressed()) {
-                telemetry.addData("Touch Sensor", "Is Pressed");
+                telemetry.addData("Like my uncle", "Touching something that its not supposed to");
             } else {
-                telemetry.addData("Touch Sensor", "Is Not Pressed");
+                telemetry.addData("Like my dad", "Wouldn't be within 3 miles of me");
             }
 
             telemetry.update();
