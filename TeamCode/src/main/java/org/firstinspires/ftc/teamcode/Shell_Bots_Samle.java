@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -64,6 +65,7 @@ public class Shell_Bots_Samle extends OpMode
     private DcMotor rightBackMotor = null;
     private DcMotor leftFrontMotor = null;
     private DcMotor rightFrontMotor = null;
+    private DcMotor DroneLauncher = null;
     private double speed = 0.75;
     //Change this value as necessary. This is the max speed the motors will go.
 
@@ -81,6 +83,7 @@ public class Shell_Bots_Samle extends OpMode
         leftFrontMotor  = hardwareMap.get(DcMotor.class, "LeftFrontMotor");
         rightBackMotor  = hardwareMap.get(DcMotor.class, "RightBackMotor");
         rightFrontMotor = hardwareMap.get(DcMotor.class, "RightFrontMotor");
+        DroneLauncher = hardwareMap.get(DcMotor.class, "LauncherDrone");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -89,6 +92,7 @@ public class Shell_Bots_Samle extends OpMode
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         rightBackMotor.setDirection(DcMotor.Direction.FORWARD);
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+        DroneLauncher.setDirection(DcMotor.Direction.REVERSE);
 
         //This should lock the motors when they are not being run YW Shellbooties
         leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -162,6 +166,7 @@ public class Shell_Bots_Samle extends OpMode
         rightFrontMotor.setPower(-motorPowers[1]);
         leftBackMotor.setPower(-motorPowers[2]);
         rightBackMotor.setPower(-motorPowers[3]);
+
         //If the controls seem inverted, remove these negative signs above as necessary
     }
 
@@ -179,6 +184,18 @@ public class Shell_Bots_Samle extends OpMode
         motorPowers[1] = (leftY - leftX - rightX);
         motorPowers[2] = (leftY - leftX + rightX);
         motorPowers[3] = (leftY + leftX - rightX);
+
+        if (this.gamepad1.dpad_up)
+        {
+
+            runtime.reset();
+            while (gamepad1.dpad_up && (runtime.seconds() <1)) {
+                DroneLauncher.setPower(-1);
+
+        }
+            DroneLauncher.setPower(0);
+        }
+
 
         //New change if no work
         if (leftX == 0 && leftY == 0)
