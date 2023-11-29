@@ -50,13 +50,14 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 @TeleOp(name = "Touch Test", group = "Sensor")
 
 public class TouchSensorTest extends LinearOpMode {
-    TouchSensor touchSensor;  // Touch sensor Object
-
+    TouchSensor touchSensorLeft;  // Touch sensor Object
+TouchSensor touchSensorRight;
     @Override
     public void runOpMode() {
 
         // get a reference to our touchSensor object.
-        touchSensor = hardwareMap.get(TouchSensor.class, "sensor_touch");
+        //touchSensor = hardwareMap.get(TouchSensor.class, "sensor_touchLeft");
+        touchSensorRight = hardwareMap.get(TouchSensor.class, "sensor_touchRight");
 
         // wait for the start button to be pressed.
         waitForStart();
@@ -66,13 +67,14 @@ public class TouchSensorTest extends LinearOpMode {
         while (opModeIsActive()) {
 
             // send the info back to driver station using telemetry function.
-            if (touchSensor.isPressed()) {
+            if (touchSensorRight.isPressed()) {
                 telemetry.addData("Like my uncle", "Touching something that its not supposed to");
             } else {
                 telemetry.addData("Like my dad", "Wouldn't be within 3 miles of me");
             }
 
             telemetry.update();
+
         }
     }
 }
