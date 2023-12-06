@@ -32,7 +32,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
  * This OpMode demonstrates how to use a REV Robotics Touch Sensor, REV Robotics Magnetic Limit Switch, or other device
@@ -49,18 +52,32 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  */
 @TeleOp(name = "Touch Test", group = "Sensor")
 
+
+
+
 public class TouchSensorTest extends LinearOpMode {
-    TouchSensor touchSensorLeft;  // Touch sensor Object
-TouchSensor touchSensorRight;
+    private DcMotor leftFrontDrive = null;
+    private DcMotor rightFrontDrive = null;
+    private DcMotor rightBackDrive = null;
+    private DcMotor leftBackDrive = null;
+    private DcMotor DroneLauncher = null;
+    private ElapsedTime runtime = new ElapsedTime();
+private TouchSensor touchSensorRight;
+
+    //TouchSensor touchSensorLeft;  // Touch sensor Object
+//TouchSensor touchSensorRight;
     @Override
     public void runOpMode() {
 
         // get a reference to our touchSensor object.
         //touchSensor = hardwareMap.get(TouchSensor.class, "sensor_touchLeft");
         touchSensorRight = hardwareMap.get(TouchSensor.class, "sensor_touchRight");
-
+        DroneLauncher = hardwareMap.get(DcMotor.class,"LauncherDrone" );
+DroneLauncher.setDirection(DcMotor.Direction.FORWARD);
         // wait for the start button to be pressed.
         waitForStart();
+
+        //opModeInInit();
 
         // while the OpMode is active, loop and read whether the sensor is being pressed.
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
@@ -68,12 +85,14 @@ TouchSensor touchSensorRight;
 
             // send the info back to driver station using telemetry function.
             if (touchSensorRight.isPressed()) {
-                telemetry.addData("Like my uncle", "Touching something that its not supposed to");
-            } else {
-                telemetry.addData("Like my dad", "Wouldn't be within 3 miles of me");
+                DroneLauncher.setPower(0.5);
             }
 
-            telemetry.update();
+            else {
+               DroneLauncher.setPower(0);
+            }
+
+
 
         }
     }

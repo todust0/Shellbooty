@@ -56,8 +56,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Straight Forward", group="Robot")
-
-public class Atonomus extends LinearOpMode {
+@Disabled
+public class TouchAtonommus extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor leftFrontDrive = null;
@@ -69,6 +69,7 @@ public class Atonomus extends LinearOpMode {
 
     static final double FORWARD_SPEED = 0.3;
     static final double TURN_SPEED = 0.5;
+    static final double BACKWARD_SPEED = -.3;
 
     @Override
     public void runOpMode() {
@@ -94,29 +95,33 @@ public class Atonomus extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
-
-        // Step 1:  Drive forward for 3 seconds
-
-
         leftFrontDrive.setPower(FORWARD_SPEED);
         rightFrontDrive.setPower(FORWARD_SPEED);
         rightBackDrive.setPower(FORWARD_SPEED);
         leftBackDrive.setPower(FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() <2.9 )) {
+        while (opModeIsActive() && (runtime.seconds() < 2.9)) {
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+        leftFrontDrive.setPower(BACKWARD_SPEED);
+        rightFrontDrive.setPower(FORWARD_SPEED);
+        rightBackDrive.setPower(FORWARD_SPEED);
+        leftBackDrive.setPower(BACKWARD_SPEED);
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
-                // Step 4:  Stop
-        leftFrontDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
-        leftBackDrive.setPower(0);
+            // Step 4:  Stop
+            leftFrontDrive.setPower(0);
+            rightFrontDrive.setPower(0);
+            rightBackDrive.setPower(0);
+            leftBackDrive.setPower(0);
 
-                telemetry.addData("Path", "Complete");
-                telemetry.update();
-                sleep(1000);
+
+            telemetry.addData("Path", "Complete");
+            telemetry.update();
+            sleep(1000);
         }
     }

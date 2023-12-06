@@ -196,6 +196,11 @@ public class Shell_Bots_Samle extends OpMode
             DroneLauncher.setPower(0);
         }
 
+        if (gamepad1.right_stick_x != 0){
+            speed = 1;
+        } else {
+            speed = 0.75;
+        }
 
         //New change if no work
         if (leftX == 0 && leftY == 0)
