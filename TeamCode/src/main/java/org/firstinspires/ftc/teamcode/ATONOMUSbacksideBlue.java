@@ -96,6 +96,15 @@ public class ATONOMUSbacksideBlue extends LinearOpMode {
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
 
         // Step 1:  Drive right for 0.3 seconods
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() <15.0 )) {
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
         leftFrontDrive.setPower(FORWARD_SPEED);
         rightFrontDrive.setPower(BACKWARD_SPEED);
         rightBackDrive.setPower(FORWARD_SPEED);

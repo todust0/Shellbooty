@@ -56,8 +56,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  */
 
 @TeleOp(name="Shellbots", group="Iterative OpMode")
-public class Shell_Bots_Samle extends OpMode
-{
+public class Shell_Bots_Samle extends OpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -66,6 +65,9 @@ public class Shell_Bots_Samle extends OpMode
     private DcMotor leftFrontMotor = null;
     private DcMotor rightFrontMotor = null;
     private DcMotor DroneLauncher = null;
+    private DcMotor ArmMotor1 = null;
+    private DcMotor ArmMotor2 = null;
+    private double ArmPower = 0.5;
     private double speed = 0.75;
     //Change this value as necessary. This is the max speed the motors will go.
 
@@ -79,11 +81,13 @@ public class Shell_Bots_Samle extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftBackMotor  = hardwareMap.get(DcMotor.class, "LeftBackMotor");
-        leftFrontMotor  = hardwareMap.get(DcMotor.class, "LeftFrontMotor");
-        rightBackMotor  = hardwareMap.get(DcMotor.class, "RightBackMotor");
+        leftBackMotor = hardwareMap.get(DcMotor.class, "LeftBackMotor");
+        leftFrontMotor = hardwareMap.get(DcMotor.class, "LeftFrontMotor");
+        rightBackMotor = hardwareMap.get(DcMotor.class, "RightBackMotor");
         rightFrontMotor = hardwareMap.get(DcMotor.class, "RightFrontMotor");
         DroneLauncher = hardwareMap.get(DcMotor.class, "LauncherDrone");
+        ArmMotor1 = hardwareMap.get(DcMotor.class, "MotorArm1");
+        ArmMotor2 = hardwareMap.get(DcMotor.class, "MotorArm2");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -93,12 +97,16 @@ public class Shell_Bots_Samle extends OpMode
         rightBackMotor.setDirection(DcMotor.Direction.FORWARD);
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         DroneLauncher.setDirection(DcMotor.Direction.REVERSE);
+        ArmMotor1.setDirection(DcMotor.Direction.FORWARD);
+        ArmMotor2.setDirection(DcMotor.Direction.FORWARD);
 
         //This should lock the motors when they are not being run YW Shellbooties
         leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ArmMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ArmMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -152,11 +160,10 @@ public class Shell_Bots_Samle extends OpMode
 
      These three functions do all of the math and fun stuff to make the mecanum drive work.
      There's only one thing you should have to touch ever.
-
      *****************************************************************************/
 
 
-    public void setIndividualPowers ( float[] motorPowers){
+    public void setIndividualPowers(float[] motorPowers) {
         // This function creates an array so that the function below works.
 
         if (motorPowers.length != 4) {
@@ -170,7 +177,7 @@ public class Shell_Bots_Samle extends OpMode
         //If the controls seem inverted, remove these negative signs above as necessary
     }
 
-    private void singleJoystickDrive () {
+    private void singleJoystickDrive() {
         // We don't really know how this function works, but it makes the wheels drive, so we don't question it.
         // Don't mess with this function unless you REALLY know what you're doing.
 
@@ -185,45 +192,51 @@ public class Shell_Bots_Samle extends OpMode
         motorPowers[2] = (leftY - leftX + rightX);
         motorPowers[3] = (leftY + leftX - rightX);
 
-        if (this.gamepad1.dpad_up)
-        {
+        if (this.gamepad1.dpad_up) {
 
             runtime.reset();
-            while (gamepad1.dpad_up && (runtime.seconds() <1)) {
-                DroneLauncher.setPower(-1);
+            while (gamepad1.dpad_up && (runtime.seconds() < 1)) {
+                ArmMotor2.setPower(-0.6);
 
-        }
+
+            }
+            ArmMotor2.setPower(0);
+            runtime.reset();
+            while (runtime.seconds() < 0.5){
+                DroneLauncher.setPower(-1);
+                while (runtime.seconds() < 0.5){
+                    DroneLauncher.setPower(0);
+            }
             DroneLauncher.setPower(0);
         }
 
-        if (gamepad1.right_stick_x != 0){
+        if (gamepad1.right_stick_x != 0) {
             speed = 1;
         } else {
             speed = 0.75;
         }
 
+
         //New change if no work
-        if (leftX == 0 && leftY == 0)
-        {
+        if (leftX == 0 && leftY == 0) {
             leftFrontMotor.setPower(0);
             leftBackMotor.setPower(0);
             rightFrontMotor.setPower(0);
             rightBackMotor.setPower(0);
-        }
-        else
-        {leftFrontMotor.setPower(-motorPowers[0]);
+        } else {
+            leftFrontMotor.setPower(-motorPowers[0]);
             rightFrontMotor.setPower(-motorPowers[1]);
             leftBackMotor.setPower(-motorPowers[2]);
             rightBackMotor.setPower(-motorPowers[3]);
         }
-        //end of new stuff
+        /*///end of new stuff
         float max = getLargestAbsVal(motorPowers);
         if (max < 1) {
             max = 1;
-        }
+        }*/
 
         for (int i = 0; i < motorPowers.length; i++) {
-            motorPowers[i] *= (speed / max);
+            motorPowers[i] *= (speed / 1);
 
             float abs = Math.abs(motorPowers[i]);
             if (abs < 0.05) {
@@ -234,24 +247,105 @@ public class Shell_Bots_Samle extends OpMode
             }
         }
 
+
         setIndividualPowers(motorPowers);
+
+        /*if (gamepad1.right_bumper) {
+            ArmPower = 0.5;
+        }
+        if (gamepad1.left_bumper) {
+           ArmPower = 1;
+        }*/
+        if (gamepad1.a) {
+            runtime.reset();
+            while (runtime.seconds() < 0.4) {
+                leftFrontMotor.setPower(1);
+                rightFrontMotor.setPower(1);
+                leftBackMotor.setPower(1);
+                rightBackMotor.setPower(1);
+            }
+            runtime.reset();
+            while (runtime.seconds() < 0.4) {
+                leftFrontMotor.setPower(-1);
+                rightFrontMotor.setPower(-1);
+                leftBackMotor.setPower(-1);
+                rightBackMotor.setPower(-1);
+            }
+            runtime.reset();
+        }
+        if (gamepad1.left_bumper) {
+                ArmMotor2.setPower(0);
+        }
+        if (gamepad1.y) {
+            runtime.reset();
+            while (gamepad1.y && (runtime.seconds() < 0.1)) {
+                ArmMotor2.setPower(0.6);
+            }
+            ArmMotor2.setPower(0);
+        }
+        if (gamepad1.dpad_left) {
+            runtime.reset();
+            while (gamepad1.a && (runtime.seconds() < 0.1)) {
+                ArmMotor2.setPower(-0.6);
+            }
+            ArmMotor2.setPower(0);
+        }
+        if (gamepad1.x) {
+            runtime.reset();
+            while (gamepad1.x && (runtime.seconds() < 1)) {
+                ArmMotor1.setPower(-1);
+            }
+            ArmMotor1.setPower(0);
+        }
+        if (gamepad1.b) {
+            runtime.reset();
+            while (gamepad1.b && (runtime.seconds() < 1)) {
+                ArmMotor1.setPower(1);
+            }
+            ArmMotor1.setPower(0);
+        }
+        if (gamepad1.dpad_down) {
+            runtime.reset();
+            while (runtime.seconds() < 4) {
+                ArmMotor1.setPower(1);
+            }
+            ArmMotor1.setPower(0);
+            runtime.reset();
+            while (runtime.seconds() < 1.5
+            ) {
+                ArmMotor2.setPower(0.6);
+            }
+            runtime.reset();
+            while (runtime.seconds() < 1) {
+                leftFrontMotor.setPower(-0.3);
+                rightFrontMotor.setPower(-0.3);
+                leftBackMotor.setPower(-0.3);
+                rightBackMotor.setPower(-0.3);
+            }
+            leftFrontMotor.setPower(0);
+            rightFrontMotor.setPower(0);
+            leftBackMotor.setPower(0);
+            rightBackMotor.setPower(0);
+            runtime.reset();
+            ArmMotor2.setPower(1);
+            while (runtime.seconds() < 2.8) {
+                ArmMotor1.setPower(-1);
+            }
+            ArmMotor1.setPower(0);
+        }
+
+        telemetry.addData("Arm Position", ArmMotor1.getCurrentPosition());
+        telemetry.update();
+
 
     }
 
 
-
-
-
-
-    private float getLargestAbsVal ( float[] values){
+   /* private float getLargestAbsVal(float[] values) {
         // This function does some math!
         float max = 0;
         for (float val : values) {
             if (Math.abs(val) > max) {
-                max = Math.abs(val);
+                max = Math.abs(val);*/
             }
         }
-        return max;
-    }
-
-}
